@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["sigra.yandex@gmail.com"]
 
   spec.summary       = "Retrieves exchange rates from the Riksbank Sweden"
-  spec.homepage      = "https://github.com/sigra"
+  spec.homepage      = "https://github.com/sigra/riksbank-currency"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
