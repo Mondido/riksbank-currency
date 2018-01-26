@@ -1,8 +1,10 @@
 require 'nokogiri'
 
 module RiksbankCurrency
-  class BusinessDay
-    def self.get_latest(date)
+  module BusinessDay
+    module_function
+
+    def get_latest(date)
       template = <<-XML
           <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsd="http://swea.riksbank.se/xsd">
           <soap:Header/>

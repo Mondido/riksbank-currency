@@ -3,12 +3,14 @@ require 'net/http'
 require 'nokogiri'
 
 module RiksbankCurrency
-  class Request
+  module Request
+    module_function
+
     ENDPOINT = "http://swea.riksbank.se/sweaWS/services/SweaWebServiceHttpSoap12Endpoint"
 
-    # @param [Object] xml_body
+    # @param [String] xml_body
     # @return [Nokogiri::XML::Document]
-    def self.call(xml_body)
+    def call(xml_body)
       uri = URI.parse(ENDPOINT)
 
       request = Net::HTTP::Post.new(uri.path)

@@ -19,6 +19,7 @@ module RiksbankCurrency
     # @return [Hash]
     def to_hash
       rates = fetcher.to_hash
+      rates['SEK'] = 1.0
       recombine_by_base(rates)
     end
 
@@ -32,18 +33,26 @@ module RiksbankCurrency
           DateFetcher.new(@date)
         end
     end
-    delegate :rate_date, to: :fetcher
+
+    # @return [Date]
+    def rate_date
+      fetcher.rate_date
+    end
 
     protected
 
     def recombine_by_base(rates)
       if @base != 'SEK'
+        new_rates = {}
+
         rates.each do |currency, value|
-          rates[currency] = rates[@base] / value
+          new_rates[currency] = rates[@base] / value
         end
+
+        rates = new_rates
       end
 
-      rates[@base] = 1
+      rates[@base] = 1.0
 
       rates
     end

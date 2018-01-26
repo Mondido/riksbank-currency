@@ -9,7 +9,9 @@ module RiksbankCurrency
     #
     # @param [String] Riksbank SeriesId
     def currency_from_seriesid(seriesid)
-      seriesid.match(/SEK(\w+)PMI/).try(:[], 1)
+      unless (matches = seriesid.match(/SEK(\w+)PMI/)).nil?
+        matches[1]
+      end
     end
 
     # Generate series name for specific currency
