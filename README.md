@@ -1,8 +1,7 @@
-# RiksbankCurrency
+# Riksbank Exchange Rates
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/riksbank_currency`. To experiment with that code, run `bin/console` for an interactive prompt.
+Simple wrapper for Riksbank API that returns currency exchange rates for the specific date.
 
-TODO: Delete this and the text above, and describe your gem
 
 ## Installation
 
@@ -22,22 +21,102 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Initialize
 
-## Development
+```ruby
+  bank = RiksbankCurrency::Rates.new(date: Date.yesterday, base: 'USD')
+```
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+Initializer options:
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+  * `date` - the day for which we want to get exchange rates. It should be `Date` object 
+  * `base` - base currency (by default `SEK`)
+  * `rates` - you can pass your own hash with rates. Can be useful for caching purposes
 
-## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/riksbank_currency. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+### Retrieve a specific rate
+
+```ruby
+  # how many euros in one american dollar?
+  bank.rate('USD', 'EUR').to_f # => 0.80607
+  
+  # by default it converts to SEK
+  bank.rate('USD').to_f # => 7.913
+```
+
+Get all available currencies:
+
+```ruby
+  bank.currencies # => ['AUD', 'BRL', 'CAD', 'CHF', 'CNY', 'CZK', 'DKK', 'EUR'...]
+```
+
+Get all rates
+
+```ruby
+  bank.rates # => { 'NOK' => 105.556298, 'INR' => 13.619511, … }
+```
+
+### Bank days and holidays
+
+During the holidays or weekends bank doesn't change exchange rates. It means that
+bank doesn't have exchange rates for Saturday or Christmas.
+
+Also, another problem in the current day. Bank refreshes rates twice per day (morning and evening).
+So, therefore at 3 o'clock of morning bank doensn't have fresh rates and we should use
+rates from prevoius day.
+
+This gem deals with all of this problems:
+
+```ruby
+  # 20.01.2018 is Saturday, bank doesn't work at this day
+  holiday_bank = RiksbankCurrency::Rates.new(date: Date.new(2018, 1, 20))
+  
+  # rates will be got from Friday!
+  holiday_bank.rate_date # Fri, 19 Jan 2018
+  
+  
+  
+  
+  # imagine that we do it at night
+  # Time.current => Fri, 26 Jan 2018 03:00:00 UTC +00:00 
+  morning_bank = RiksbankCurrency::Rates.new
+  
+  # it is too early, bank doensn't work at this time
+  # let's use yesterday rates 
+  morning_bank.rate_date # Thu, 25 Jan 2018
+```
+
+### Available currencies
+
+Pay attention to check available currencies at [official bank page](http://www.riksbank.se/en/Interest-and-exchange-rates/Series-for-web-services/).
+
+By default this gem uses only existing currencies for 2018. For example, FIM (Finland Marka)
+has rates only till 2002 and it doesn't exist anymore in 2018.
+
+So, if you wanna get information about FIM exchange rate in 2001 you should 
+change the gem defaults:
+
+```ruby
+  RiksbankCurrency.currencies << 'FIM'
+  
+  old_bank = RiksbankCurrency::Rates.new(date: Date.new(2001, 1, 16))
+  old_bank.rate('FIM').to_f # 1.495527
+  
+  today_bank = RiksbankCurrency::Rates.new
+  today_bank.rate('FIM') # nil
+```
+
+#### Default currencies
+
+```ruby
+%w(AUD BRL CAD CHF CNY CZK DKK EUR GBP HKD HUF IDR INR ISK JPY
+   KRW MAD MXN NOK NZD PLN RUB SAR SGD THB TRY USD ZAR)
+```
+
+## Legal
+
+The author of this gem is not affiliated with the Riksbank.
 
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
-## Code of Conduct
-
-Everyone interacting in the RiksbankCurrency project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/riksbank_currency/blob/master/CODE_OF_CONDUCT.md).

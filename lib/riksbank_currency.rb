@@ -1,5 +1,10 @@
+require 'riksbank_currency/helper'
+require 'riksbank_currency/business_day'
 require 'riksbank_currency/fetcher'
+require 'riksbank_currency/fetcher/date_fetcher'
+require 'riksbank_currency/fetcher/today_fetcher'
 require 'riksbank_currency/rates'
+require 'riksbank_currency/request'
 require 'riksbank_currency/version'
 
 module RiksbankCurrency
