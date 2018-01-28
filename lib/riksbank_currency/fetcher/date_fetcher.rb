@@ -3,8 +3,8 @@ module RiksbankCurrency
   #
   # @see https://swea.riksbank.se/sweaWS/docs/api/call/getInterestAndExchangeRates.htm
   #
-  # IMPORTANT! The date should be less than current date. To get rates for today
-  # see at TodayFetcher
+  # IMPORTANT! The date should be less than current date.
+  # To get current rates - check TodayFetcher
   class DateFetcher
     def initialize(date)
       @date = date
