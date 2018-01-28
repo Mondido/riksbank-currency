@@ -33,11 +33,11 @@ module RiksbankCurrency
       @rates ||= fetcher.to_hash
     end
 
-    # Sometimes date passed to the initializer differs from real exchange date.
-    # It causes from holidays, weekends and etc.
+    # Sometimes date passed to the initializer is different from last available exchange date.
+    # It could be because of holidays, weekends or bank closing hours.
     #
     # For example, if we want to get rates for the `1st of January 2018` then rate date
-    # will be `27th of December 2017`
+    # will be `27th of December 2017`, because `1st of January` is a holiday.
     # @return [Date]
     def rate_date
       @rate_date ||= fetcher.rate_date
