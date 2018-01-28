@@ -1,6 +1,6 @@
 # Riksbank Exchange Rates
 
-Simple wrapper for Riksbank API that returns currency exchange rates for the specific date.
+Simple wrapper for Riksbank API that returns currency exchange rates for specific date.
 
 
 ## Installation
@@ -29,15 +29,15 @@ Or install it yourself as:
 
 Initializer options:
 
-  * `date` - the day for which we want to get exchange rates. It should be `Date` object 
-  * `base` - base currency (by default `SEK`)
+  * `date` - specific date we want to get exchange rates for. It should be a valid `Date` object 
+  * `base` - base currency (`SEK` is used by default)
   * `rates` - you can pass your own hash with rates. Can be useful for caching purposes
 
 
 ### Retrieve a specific rate
 
 ```ruby
-  # how many euros in one american dollar?
+  # How many euros in one american dollar?
   bank.rate('USD', 'EUR').to_f # => 0.80607
   
   # by default it converts to SEK
@@ -56,42 +56,48 @@ Get all rates
   bank.rates # => { 'NOK' => 105.556298, 'INR' => 13.619511, … }
 ```
 
-### Bank days and holidays
+### Rates from holidays / weekends
 
-During the holidays or weekends bank doesn't change exchange rates. It means that
-bank doesn't have exchange rates for Saturday or Christmas.
+Exchange rates are not changed during holidays or weekends. 
+If you query bank API directly, you will get an empty hash in response.
 
-Also, another problem in the current day. Bank refreshes rates twice per day (morning and evening).
-So, therefore at 3 o'clock of morning bank doensn't have fresh rates and we should use
-rates from prevoius day.
-
-This gem deals with all of this problems:
+To avoid that, this gem provides last known rates:
 
 ```ruby
-  # 20.01.2018 is Saturday, bank doesn't work at this day
+  # 20.01.2018 is Saturday, bank is closed
   holiday_bank = RiksbankCurrency::Rates.new(date: Date.new(2018, 1, 20))
   
-  # rates will be got from Friday!
+  # Last known rates will be fetched instead (from Friday).
   holiday_bank.rate_date # Fri, 19 Jan 2018
-  
-  
-  
-  
-  # imagine that we do it at night
+````
+
+### Riksbank updates rates twice a day (in the morning and in the evening)
+
+If you try to fetch rates at 03.00 in the morning, then you will get an empty hash from the bank.
+Therefore gem will return rates from a previous date.
+
+```ruby
   # Time.current => Fri, 26 Jan 2018 03:00:00 UTC +00:00 
   morning_bank = RiksbankCurrency::Rates.new
   
-  # it is too early, bank doensn't work at this time
-  # let's use yesterday rates 
+  # It's too early, bank doensn't work at this time
+  # Yesterday's rates will be used instead 
   morning_bank.rate_date # Thu, 25 Jan 2018
 ```
 
-### Available currencies
+#### Default currencies
 
-Pay attention to check available currencies at [official bank page](http://www.riksbank.se/en/Interest-and-exchange-rates/Series-for-web-services/).
+```ruby
+%w(AUD BRL CAD CHF CNY CZK DKK EUR GBP HKD HUF IDR INR ISK JPY
+   KRW MAD MXN NOK NZD PLN RUB SAR SGD THB TRY USD ZAR)
+```
 
-By default this gem uses only existing currencies for 2018. For example, FIM (Finland Marka)
-has rates only till 2002 and it doesn't exist anymore in 2018.
+### Additional currencies
+
+Check bank page to get a fresh list of provided currencies [official bank page](http://www.riksbank.se/en/Interest-and-exchange-rates/Series-for-web-services/).
+
+By default this gem is only using existing currencies from 2018.
+For example, FIM (Finland Marka) has published rates until 2002. 
 
 So, if you wanna get information about FIM exchange rate in 2001 you should 
 change the gem defaults:
@@ -104,13 +110,6 @@ change the gem defaults:
   
   today_bank = RiksbankCurrency::Rates.new
   today_bank.rate('FIM') # nil
-```
-
-#### Default currencies
-
-```ruby
-%w(AUD BRL CAD CHF CNY CZK DKK EUR GBP HKD HUF IDR INR ISK JPY
-   KRW MAD MXN NOK NZD PLN RUB SAR SGD THB TRY USD ZAR)
 ```
 
 ## Legal
