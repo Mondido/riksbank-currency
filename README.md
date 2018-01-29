@@ -1,5 +1,4 @@
-[![Build Status](https://travis-ci.org/sigra/riksbank-currency.svg?branch=master)](https://travis-ci.org/sigra/riksbank-currency)
-
+[![Build Status](https://travis-ci.org/Mondido/riksbank-currency.svg?branch=master)](https://travis-ci.org/Mondido/riksbank-currency)
 # Riksbank Exchange Rates
 
 Simple wrapper for Riksbank API that returns currency exchange rates for specific date.
