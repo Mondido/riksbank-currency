@@ -32,7 +32,7 @@ module RiksbankCurrency
     end
 
     def response
-      @response ||= Request.call(xml_template)
+      @response ||= Request.call(xml_template, 'getLatestInterestAndExchangeRates')
     end
 
     protected
