@@ -19,7 +19,7 @@ module RiksbankCurrency
 
       date = nil
 
-      Request.call(template).xpath('//return').reverse_each do |block|
+      Request.call(template, 'getCalendarDays').xpath('//return').reverse_each do |block|
         bankday = block.at_xpath('bankday').content == 'Y'
         next unless bankday
 

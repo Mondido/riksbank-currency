@@ -34,7 +34,7 @@ module RiksbankCurrency
     end
 
     def response
-      @response ||= Request.call(xml_template)
+      @response ||= Request.call(xml_template, 'getInterestAndExchangeRates')
     end
 
     protected
@@ -63,14 +63,14 @@ module RiksbankCurrency
           <xsd:getInterestAndExchangeRates>
             <searchRequestParameters>
               <aggregateMethod>D</aggregateMethod>
-              <avg>false</avg>
               <datefrom>#{formatted_date}</datefrom>
               <dateto>#{formatted_date}</dateto>
               <languageid>en</languageid>
-              <max>true</max>
               <min>false</min>
-              #{groups}
+              <avg>true</avg>
+              <max>true</max>
               <ultimo>false</ultimo>
+              #{groups}
             </searchRequestParameters>
           </xsd:getInterestAndExchangeRates>   
         </soap:Body>

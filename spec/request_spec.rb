@@ -15,7 +15,7 @@ RSpec.describe RiksbankCurrency::Request do
 
   describe '#call' do
     it 'returns Nokogiri document' do
-      expect(subject.call(xml)).to be_an_instance_of(Nokogiri::XML::Document)
+      expect(subject.call(xml, 'getCalendarDays')).to be_an_instance_of(Nokogiri::XML::Document)
     end
   end
 end

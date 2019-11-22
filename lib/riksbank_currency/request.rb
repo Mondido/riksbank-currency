@@ -6,18 +6,23 @@ module RiksbankCurrency
   module Request
     module_function
 
-    ENDPOINT = "http://swea.riksbank.se/sweaWS/services/SweaWebServiceHttpSoap12Endpoint"
+    ENDPOINT = "https://swea.riksbank.se/sweaWS/services/SweaWebServiceHttpSoap12Endpoint"
 
     # @param [String] xml_body
     # @return [Nokogiri::XML::Document]
-    def call(xml_body)
+    def call(xml_body, action)
+      raise 'action is required' unless action
+
       uri = URI.parse(ENDPOINT)
 
       request = Net::HTTP::Post.new(uri.path)
-      request.body = xml_body
-      request.content_type = 'text/xml'
 
-      response = Net::HTTP.new(uri.host, uri.port).start { |http| http.request request }
+      request.body = xml_body
+      request.content_type = "application/soap+xml;charset=UTF-8;action=\"urn:#{action}\""
+
+      response = Net::HTTP.start(uri.host, uri.port, { use_ssl: true }) do |http|
+        http.request request
+      end
       Nokogiri::XML(response.body)
     end
   end
